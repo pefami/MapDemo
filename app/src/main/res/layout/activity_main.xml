@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.pefami.mapdemo.MainActivity">
+    <LinearLayout
+        android:id="@+id/llt_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn_location"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="定位自身"
+            android:textSize="16sp"
+            android:layout_margin="5dp"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="开启行程"
+            android:textSize="16sp"
+            android:layout_margin="5dp"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/btn_heat"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="热力图"
+            android:textSize="16sp"
+            android:layout_margin="5dp"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/bmapView"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/llt_top"
+        android:layout_height="fill_parent"
+        android:clickable="true" />
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_totaldis"
+            android:textSize="16sp"
+            android:padding="5dp"
+            android:textColor="#ff0000"
+            android:text="当前有效行程：0 米"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</RelativeLayout>
