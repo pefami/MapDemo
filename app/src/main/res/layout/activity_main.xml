@@ -41,6 +41,14 @@
             android:layout_margin="2dp"
             android:layout_height="wrap_content" />
     </LinearLayout>
+    <Button
+        android:id="@+id/btn_history"
+        android:layout_width="wrap_content"
+        android:text="显示历史轨迹"
+        android:textSize="16sp"
+        android:layout_margin="2dp"
+        android:layout_below="@+id/llt_top"
+        android:layout_height="wrap_content" />
     <com.baidu.mapapi.map.MapView
         android:id="@+id/bmapView"
         android:layout_width="fill_parent"

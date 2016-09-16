@@ -1,5 +1,6 @@
 package com.example.pefami.mapdemo;
 
+import android.content.ContentValues;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,9 @@ import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.example.pefami.mapdemo.dao.TrackDao;
+
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private MapView mapView;
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btn_boundary;
     private TextView tv_totaldis;
     private TextView tv_speed;
+    private Button btn_history;
 
     private volatile boolean isFristLocation = true;
     private String provider;
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TrackManger trackManger;//轨迹管理
     private double mCurrentLantitude;
     private double mCurrentLongitude;
+    private TrackDao trackDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +59,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv_totaldis= (TextView) findViewById(R.id.tv_totaldis);
         tv_speed= (TextView) findViewById(R.id.tv_speed);
         btn_boundary= (Button) findViewById(R.id.btn_boundary);
+        btn_history= (Button) findViewById(R.id.btn_history);
         btn_location.setOnClickListener(this);
         btn_start.setOnClickListener(this);
         btn_heat.setOnClickListener(this);
         btn_boundary.setOnClickListener(this);
+        btn_history.setOnClickListener(this);
         initMyLocation();
+        trackDao=new TrackDao(getApplicationContext());
     }
 
     /**
@@ -77,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         option.setIsNeedLocationDescribe(true);
         mLocationClient.setLocOption(option);
     }
-
+    private String trackid;//轨迹ID
     /**
      * 实现实位回调监听
      */
@@ -119,6 +128,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
               String distance="当前有效行程：" +(int)trackDraw.distanceTotal()+"米";
                 tv_totaldis.setText(distance);
             }
+            if(trackid!=null)
+            addLocationToDB(location);
             /*  在此处可以将定位到的坐标点上传到服务器保存*/
             // 第一次定位时，将地图位置移动到当前位置
             if (isFristLocation) {
@@ -130,6 +141,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
+    }
+    //将坐标保存到数据库中
+    private void addLocationToDB(BDLocation location) {
+        ContentValues contentValues=new ContentValues();
+        contentValues.put(TrackDao.TRACKID,trackid);
+        contentValues.put(TrackDao.LANTITUDE,location.getLatitude());
+        contentValues.put(TrackDao.LONGITUDE,location.getLongitude());
+        contentValues.put(TrackDao.SPEED,location.getSpeed());
+        contentValues.put(TrackDao.TIME,System.currentTimeMillis());
+        trackDao.addTrackPoint(contentValues);
     }
 
     @Override
@@ -170,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isStartTrack;
     private OverlayUtils overlayUtils;
     private boolean isShowBound;
+    private boolean isShowHistory;
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -187,10 +209,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     trackDraw.moveLooper();
                     btn_start.setText("关闭行程");
                     isStartTrack = true;
+                    //生成当前轨迹ID
+                    trackid= UUID.randomUUID().toString();
                 } else {
                     btn_start.setText("开启行程");
                     isStartTrack = false;
                     trackDraw.stopMoveLooper();
+                    trackid=null;
+                    trackDao.queryTrack();
                 }
                 break;
             // 热力图
@@ -206,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(!isShowBound){
                     isShowBound=true;
                     if(overlayUtils==null){
-                        overlayUtils=new OverlayUtils();
+                        overlayUtils=new OverlayUtils(getApplicationContext());
                     }
 //                    overlayUtils.showBoundary(baiduMap,"深圳","南山区");
                     overlayUtils.showBoundary(baiduMap,"深圳",null);
@@ -217,6 +243,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         overlayUtils.hideBoundary();
                     }
                     btn_boundary.setText("显示边界");
+                }
+                break;
+            //显示历史轨迹
+            case R.id.btn_history:
+                if(!isShowHistory){
+                    isShowHistory=true;
+                    if(overlayUtils==null){
+                        overlayUtils=new OverlayUtils(getApplicationContext());
+                    }
+                    overlayUtils.showHistoryTrack(trackDao,baiduMap);
+                    btn_history.setText("隐藏历史轨迹");
+                }else{
+                    isShowHistory=false;
+                    if (overlayUtils!=null){
+                        overlayUtils.hideHistoryTrack();
+                    }
+                    btn_history.setText("显示历史轨迹");
                 }
                 break;
         }
