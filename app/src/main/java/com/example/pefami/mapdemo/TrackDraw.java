@@ -37,6 +37,13 @@ public class TrackDraw {
         baiduMap = mapView.getMap();
         centerLatitude = lat;
         centerLontitude = lon;
+        loopTrackData();
+        OverlayOptions stMarkerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f).icon(BitmapDescriptorFactory
+                .fromResource(R.mipmap.icon_st)).position(mTrackList.get(0));
+        mStartMarker = (Marker) baiduMap.addOverlay(stMarkerOptions);
+        OverlayOptions enMarkerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f).icon(BitmapDescriptorFactory
+                .fromResource(R.mipmap.icon_en)).position(mTrackList.get(mTrackList.size() - 1)).rotate((float) getAngle(0));
+        mEndMarker = (Marker) baiduMap.addOverlay(enMarkerOptions);
     }
 
     //添加位置
@@ -59,7 +66,6 @@ public class TrackDraw {
     }
 
     private void loopTrackData() {
-        baiduMap.clear();
         if (mTrackList.size() == 0) {
             mTrackList.add(new LatLng(centerLatitude, centerLontitude));
         }
@@ -69,13 +75,10 @@ public class TrackDraw {
 
         OverlayOptions polylineOptions;
         polylineOptions = new PolylineOptions().points(mTrackList).width(10).color(Color.RED);
+        if(mVirtureRoad!=null){
+            mVirtureRoad.remove();
+        }
         mVirtureRoad = (Polyline) baiduMap.addOverlay(polylineOptions);
-        OverlayOptions stMarkerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f).icon(BitmapDescriptorFactory
-                .fromResource(R.mipmap.icon_st)).position(mTrackList.get(0));
-        mStartMarker = (Marker) baiduMap.addOverlay(stMarkerOptions);
-        OverlayOptions enMarkerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f).icon(BitmapDescriptorFactory
-                .fromResource(R.mipmap.icon_en)).position(mTrackList.get(mTrackList.size() - 1)).rotate((float) getAngle(0));
-        mEndMarker = (Marker) baiduMap.addOverlay(enMarkerOptions);
     }
 
     /**

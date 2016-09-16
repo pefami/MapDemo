@@ -14,7 +14,7 @@
             android:layout_weight="1"
             android:text="定位自身"
             android:textSize="16sp"
-            android:layout_margin="5dp"
+            android:layout_margin="2dp"
             android:layout_height="wrap_content" />
         <Button
             android:id="@+id/btn_start"
@@ -22,7 +22,7 @@
             android:layout_weight="1"
             android:text="开启行程"
             android:textSize="16sp"
-            android:layout_margin="5dp"
+            android:layout_margin="2dp"
             android:layout_height="wrap_content" />
         <Button
             android:id="@+id/btn_heat"
@@ -30,7 +30,15 @@
             android:layout_weight="1"
             android:text="热力图"
             android:textSize="16sp"
-            android:layout_margin="5dp"
+            android:layout_margin="2dp"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/btn_boundary"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="显示边界"
+            android:textSize="16sp"
+            android:layout_margin="2dp"
             android:layout_height="wrap_content" />
     </LinearLayout>
     <com.baidu.mapapi.map.MapView
@@ -49,6 +57,15 @@
             android:padding="5dp"
             android:textColor="#ff0000"
             android:text="当前有效行程：0 米"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tv_speed"
+            android:textSize="16sp"
+            android:padding="5dp"
+            android:textColor="#ff0000"
+            android:text="速度：0 km/h"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

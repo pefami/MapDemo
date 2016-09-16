@@ -26,7 +26,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btn_location;
     private Button btn_start;
     private Button btn_heat;
+    private Button btn_boundary;
     private TextView tv_totaldis;
+    private TextView tv_speed;
 
     private volatile boolean isFristLocation = true;
     private String provider;
@@ -49,9 +51,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_start = (Button) findViewById(R.id.btn_start);
         btn_heat = (Button) findViewById(R.id.btn_heat);
         tv_totaldis= (TextView) findViewById(R.id.tv_totaldis);
+        tv_speed= (TextView) findViewById(R.id.tv_speed);
+        btn_boundary= (Button) findViewById(R.id.btn_boundary);
         btn_location.setOnClickListener(this);
         btn_start.setOnClickListener(this);
         btn_heat.setOnClickListener(this);
+        btn_boundary.setOnClickListener(this);
         initMyLocation();
     }
 
@@ -67,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true);// 打开gps
         option.setCoorType("bd09ll"); // 设置坐标类型
+        option.setIsNeedAddress(true);
         option.setScanSpan(2000);
         option.setIsNeedLocationDescribe(true);
         mLocationClient.setLocOption(option);
@@ -106,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }*/
             //获取当前速度
             float speed = location.getSpeed();
-            Toast.makeText(getApplicationContext(),"速度："+speed,Toast.LENGTH_SHORT).show();
+            tv_speed.setText("速度："+speed+" km/h");
 
             //获取当前计算的行程
             if(trackDraw!=null){
@@ -114,9 +120,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tv_totaldis.setText(distance);
             }
             /*  在此处可以将定位到的坐标点上传到服务器保存*/
-
             // 第一次定位时，将地图位置移动到当前位置
             if (isFristLocation) {
+                Toast.makeText(getApplicationContext(),location.getCity()+":"+location.getAddrStr()+":"+location.getCityCode(),Toast.LENGTH_SHORT).show();
                 isFristLocation = false;
                 baiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(new MapStatus.Builder().zoom(15).build()));
                 MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
@@ -162,13 +168,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private TrackDraw trackDraw;
     private boolean isStartTrack;
-
+    private OverlayUtils overlayUtils;
+    private boolean isShowBound;
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            //定位
             case R.id.btn_location:
                 isFristLocation = true;
                 break;
+            //行程记录
             case R.id.btn_start:
                 if (!isStartTrack) {
                     if (trackDraw == null) {
@@ -190,6 +199,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     baiduMap.setBaiduHeatMapEnabled(false);
                 } else {
                     baiduMap.setBaiduHeatMapEnabled(true);
+                }
+                break;
+            //区域边界
+            case R.id.btn_boundary:
+                if(!isShowBound){
+                    isShowBound=true;
+                    if(overlayUtils==null){
+                        overlayUtils=new OverlayUtils();
+                    }
+//                    overlayUtils.showBoundary(baiduMap,"深圳","南山区");
+                    overlayUtils.showBoundary(baiduMap,"深圳",null);
+                    btn_boundary.setText("隐藏边界");
+                }else{
+                    isShowBound=false;
+                    if (overlayUtils!=null){
+                        overlayUtils.hideBoundary();
+                    }
+                    btn_boundary.setText("显示边界");
                 }
                 break;
         }
