@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.pefami.mapdemo.bean.TrackPoint;
 
@@ -46,9 +47,9 @@ public class TrackDao {
             double speed = cursor.getDouble(cursor.getColumnIndex(SPEED));
             list.add(new TrackPoint(trackid, lantitude, longitude, time, speed));
         }
-//        for(TrackPoint t:list){
-//            Log.e("Locationg",t.toString());
-//        }
+        for(TrackPoint t:list){
+            Log.e("Locationg",t.toString());
+        }
         cursor.close();
         readableDatabase.close();
         return list;

@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private LocationManager locationManager;
     private LocationClient mLocationClient;//定位客户端
     public MyLocationListener mMyLocationListener;//定位的监听器
-    private TrackManger trackManger;//轨迹管理
     private double mCurrentLantitude;
     private double mCurrentLongitude;
     private TrackDao trackDao;
@@ -237,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                    overlayUtils.showBoundary(baiduMap,"深圳","南山区");
                     overlayUtils.showBoundary(baiduMap,"深圳",null);
                     btn_boundary.setText("隐藏边界");
+                    baiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(new MapStatus.Builder().zoom(11).build()));
                 }else{
                     isShowBound=false;
                     if (overlayUtils!=null){
